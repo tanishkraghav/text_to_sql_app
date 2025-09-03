@@ -17,7 +17,7 @@ This repository contains all the code necessary to run the application locally a
 
 ## Demo
 
-<img width="1912" height="945" alt="Screenshot 2025-09-03 170513" src="https://github.com/user-attachments/assets/f51cdabc-0416-4bf5-b4d5-9fef527b1461" />
+<img width="900" height="500" alt="Screenshot 2025-09-03 170513" src="https://github.com/user-attachments/assets/f51cdabc-0416-4bf5-b4d5-9fef527b1461" />
 <img width="1783" height="704" alt="Screenshot 2025-09-03 170550" src="https://github.com/user-attachments/assets/4c26342d-3ca2-4295-a5a1-78984022d49f" />
 
 
