@@ -34,7 +34,25 @@ This repository contains all the code necessary to run the application locally a
 
 1. **Clone the repository**
    ```bash
-   git clone 
-   cd your-repo-name
+   git clone https://github.com/tanishkraghav/text_to_sql_app.git
+   cd text_to_sql_app
 
+2. **Create a virtual environment (optional but recommended)**
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+
+3. **Install dependencies**4
+pip install -r requirements.txt
+
+
+4. **Set your environment variables**
+   
+*Create a .env file in the root directory:*
+GROQ_API_KEY="your_groq_api_key_here"
+
+5. **Acknowledgements**
+
+Built using Groq API
+Inspired by the idea of natural language interfaces for databases.
    
