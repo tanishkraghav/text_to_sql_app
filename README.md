@@ -38,18 +38,21 @@ This repository contains all the code necessary to run the application locally a
    cd text_to_sql_app
 
 2. **Create a virtual environment (optional but recommended)**
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 
 3. **Install dependencies**4
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
 
 
 4. **Set your environment variables**
    
-*Create a .env file in the root directory:*
-GROQ_API_KEY="your_groq_api_key_here"
+Create a .env file in the root directory:
+ ```bash
+  GROQ_API_KEY="your_groq_api_key_here"
 
 5. **Acknowledgements**
 
