@@ -50,12 +50,12 @@ This repository contains all the code necessary to run the application locally a
 
 4. **Set your environment variables**
    
-Create a .env file in the root directory:
- ```bash
-  GROQ_API_KEY="your_groq_api_key_here"
+   Create a .env file in the root directory:
+   ```bash
+   GROQ_API_KEY="your_groq_api_key_here"
 
 5. **Acknowledgements**
-
-Built using Groq API
-Inspired by the idea of natural language interfaces for databases.
+   
+   Built using Groq API
+   Inspired by the idea of natural language interfaces for databases.
    
