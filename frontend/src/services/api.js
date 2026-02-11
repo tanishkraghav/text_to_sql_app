@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -32,6 +32,7 @@ export const authAPI = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
+  googleLogin: (idToken) => api.post('/api/auth/google', { id_token: idToken }),
   getProfile: () => api.get('/api/user/profile'),
 };
 

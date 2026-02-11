@@ -51,9 +51,3 @@ function Header() {
 }
 
 export default Header;
-      </div>
-    </header>
-  );
-}
-
-export default Header;

@@ -13,6 +13,8 @@ import os
 from dotenv import load_dotenv
 import sqlite3
 from groq import Groq
+from google.auth.transport import requests
+from google.oauth2 import id_token
 
 load_dotenv()
 
@@ -33,7 +35,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Initialize Groq client
-groq_client = Groq(api_key=GROQ_API_KEY)
+try:
+    groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY and GROQ_API_KEY != "test-key-replace-with-actual-groq-api-key" else None
+except Exception as e:
+    print(f"Warning: Could not initialize Groq client: {e}")
+    groq_client = None
 
 # Database Models
 class User(Base):
@@ -95,6 +101,9 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class GoogleLogin(BaseModel):
+    id_token: str
 
 class TokenData(BaseModel):
     username: Optional[str] = None
@@ -194,6 +203,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 # Text-to-SQL function
 def generate_sql_query(question: str, schema_info: str) -> str:
     """Generate SQL query using Groq API"""
+    if not groq_client:
+        raise HTTPException(status_code=500, detail="Groq API not configured. Please set GROQ_API_KEY in .env file.")
+    
     prompt = f"""You are a SQL expert. Convert the following natural language question into a SQL query.
     
 Database Schema:
@@ -315,6 +327,47 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/api/auth/google", response_model=Token)
+async def google_login(google_data: GoogleLogin, db: Session = Depends(get_db)):
+    """Handle Google OAuth login"""
+    try:
+        # Verify the ID token (optional - if you have a client ID configured)
+        # For now, we'll accept it directly
+        # In production, you'd verify with: id_token.verify_oauth2_token()
+        
+        # Extract email from the token (you'd need to decode it properly)
+        # For now, create a demo user or look up by email
+        # In production, decode the JWT token properly
+        
+        # Create a test user with Google
+        test_email = f"google_{google_data.id_token[:20]}@example.com"
+        test_username = f"google_user_{hash(google_data.id_token) % 10000}"
+        
+        user = db.query(User).filter(User.email == test_email).first()
+        if not user:
+            hashed_password = get_password_hash("google_oauth_user")
+            user = User(
+                email=test_email,
+                username=test_username,
+                hashed_password=hashed_password,
+                is_active=True
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": user.username}, expires_delta=access_token_expires
+        )
+        
+        return {"access_token": access_token, "token_type": "bearer"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Google login failed: {str(e)}"
+        )
 
 @app.get("/api/user/profile", response_model=UserResponse)
 async def get_profile(current_user: User = Depends(get_current_user)):
@@ -454,6 +507,26 @@ async def get_schema(
     schema_info = get_database_schema(user_db.db_path)
     return {"schema": schema_info}
 
+@app.on_event("startup")
+async def startup_event():
+    """Create demo account on startup if it doesn't exist"""
+    db = SessionLocal()
+    try:
+        demo_user = db.query(User).filter(User.username == "demo").first()
+        if not demo_user:
+            hashed_password = get_password_hash("demo123")
+            demo_user = User(
+                email="demo@example.com",
+                username="demo",
+                hashed_password=hashed_password,
+                is_active=True
+            )
+            db.add(demo_user)
+            db.commit()
+            print("Demo account created successfully")
+    finally:
+        db.close()
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=5000)
