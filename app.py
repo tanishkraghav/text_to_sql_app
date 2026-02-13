@@ -17,7 +17,7 @@ if "history" not in st.session_state:
 
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"), timeout=120)  # ⏱️ increased timeout
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
 DB_PATH = "user_db.db"
@@ -99,6 +99,7 @@ def generate_sql(user_query, schema):
     Rules:
     - Only use tables and columns from the schema.
     - If CSV uploaded, use table name: uploaded_table.
+    - IMPORTANT: If a column name contains spaces, wrap it in backticks like `column name`.
     - Return ONLY the SQL query, no explanations.
     - Do NOT include ```sql or ``` in your response.
     """
